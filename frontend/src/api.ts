@@ -33,11 +33,22 @@ async function checkResponse(res: Response, fallback: string): Promise<void> {
   }
 }
 
-export async function startSession(topic: string): Promise<SegmentResponse> {
+export interface ProvidersResponse {
+  providers: string[];
+  local_model: string;
+}
+
+export async function fetchProviders(): Promise<ProvidersResponse> {
+  const res = await apiFetch(`${BASE}/providers`);
+  await checkResponse(res, "Failed to fetch providers");
+  return res.json();
+}
+
+export async function startSession(topic: string, provider: string): Promise<SegmentResponse> {
   const res = await apiFetch(`${BASE}/session/start`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ topic }),
+    body: JSON.stringify({ topic, provider }),
   });
   await checkResponse(res, "Failed to start session");
   return res.json();

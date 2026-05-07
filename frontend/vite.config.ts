@@ -9,6 +9,7 @@ export default defineConfig({
       "/session": "http://localhost:8000",
       "/audio": "http://localhost:8000",
       "/health": "http://localhost:8000",
+      "/providers": "http://localhost:8000",
     },
   },
 });

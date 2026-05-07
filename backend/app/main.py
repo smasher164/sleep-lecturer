@@ -28,6 +28,7 @@ app.mount("/audio", StaticFiles(directory=settings.audio_cache_dir), name="audio
 
 class StartRequest(BaseModel):
     topic: str
+    provider: str = "openai"
 
 
 class SegmentResponse(BaseModel):
@@ -55,13 +56,13 @@ def _api_error(e: Exception) -> HTTPException:
 
 @app.post("/session/start", response_model=SegmentResponse)
 async def start_session(body: StartRequest) -> SegmentResponse:
-    session = create_session(topic=body.topic)
+    session = create_session(topic=body.topic, provider=body.provider)
     try:
         # Short opener so first audio is ready quickly; synthesis + summary run in parallel
         transcript = await generate_transcript(session, settings.opening_word_count)
         file_path, (summary, seed) = await asyncio.gather(
             synthesize(transcript, session.session_id, session.segment_index),
-            extract_summary_seed(transcript),
+            extract_summary_seed(transcript, session.provider),
         )
     except Exception as e:
         raise _api_error(e)
@@ -91,7 +92,7 @@ async def next_segment(session_id: str) -> SegmentResponse:
         transcript = await generate_transcript(session, settings.segment_word_count)
         file_path, (summary, seed) = await asyncio.gather(
             synthesize(transcript, session_id, idx),
-            extract_summary_seed(transcript),
+            extract_summary_seed(transcript, session.provider),
         )
     except Exception as e:
         raise _api_error(e)
@@ -113,6 +114,14 @@ async def next_segment(session_id: str) -> SegmentResponse:
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/providers")
+async def providers() -> dict[str, object]:
+    available = ["openai"]
+    if settings.local_base_url:
+        available.append("local")
+    return {"providers": available, "local_model": settings.local_model}
 
 
 # Serve built frontend — must be mounted last so API routes take priority

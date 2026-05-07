@@ -1,8 +1,17 @@
+import re
 from openai import AsyncOpenAI
 from app.config import settings
 from app.session import SessionState
 
-client = AsyncOpenAI(api_key=settings.openai_api_key)
+
+def _client(provider: str) -> AsyncOpenAI:
+    if provider == "local" and settings.local_base_url:
+        return AsyncOpenAI(api_key="ollama", base_url=settings.local_base_url)
+    return AsyncOpenAI(api_key=settings.openai_api_key)
+
+
+def _model(provider: str) -> str:
+    return settings.local_model if provider == "local" else settings.openai_model
 
 SYSTEM_PROMPT = """\
 You are an older male professor at a research university, delivering a live lecture at an \
@@ -56,9 +65,18 @@ earn the listener's attention first.
 """
 
 
+_LOCAL_EXTRA = (
+    "\n\nIMPORTANT: Output spoken words only. Never write stage directions or action words "
+    "such as \"pause\", \"chuckle\", \"laughter\", \"silence\", or any parenthetical. "
+    "Do not describe what the speaker is doing — only write what he says."
+)
+
+
 async def generate_transcript(session: SessionState, word_count: int) -> str:
     """Generate the spoken lecture text for one segment."""
     system = SYSTEM_PROMPT.format(word_count=word_count)
+    if session.provider == "local":
+        system += _LOCAL_EXTRA
 
     if session.last_summary and session.continuation_seed:
         user = CONTINUATION_PROMPT.format(
@@ -69,8 +87,8 @@ async def generate_transcript(session: SessionState, word_count: int) -> str:
     else:
         user = OPENING_PROMPT.format(topic=session.topic)
 
-    response = await client.chat.completions.create(
-        model=settings.openai_model,
+    response = await _client(session.provider).chat.completions.create(
+        model=_model(session.provider),
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": user},
@@ -78,14 +96,31 @@ async def generate_transcript(session: SessionState, word_count: int) -> str:
         temperature=0.9,
     )
     text = (response.choices[0].message.content or "").strip()
+    if session.provider == "local":
+        text = _strip_stage_directions(text)
     # Trailing pause so segment boundaries feel like a natural breath, not a cut
     return text + ' <break time="2s" />'
 
 
-async def extract_summary_seed(transcript: str) -> tuple[str, str]:
+_STAGE_DIRECTION_RE = re.compile(
+    r"\b(pause|chuckle|chuckles|laughter|applause|silence|sighs?|clears? (?:his )?throat)\b",
+    re.IGNORECASE,
+)
+# Also strip parenthetical stage directions like (pause) or [chuckle]
+_PAREN_DIRECTION_RE = re.compile(r"[\(\[][^\)\]]{1,40}[\)\]]")
+
+
+def _strip_stage_directions(text: str) -> str:
+    text = _PAREN_DIRECTION_RE.sub("", text)
+    text = _STAGE_DIRECTION_RE.sub("", text)
+    # Collapse any double-spaces left behind
+    return re.sub(r"  +", " ", text).strip()
+
+
+async def extract_summary_seed(transcript: str, provider: str = "openai") -> tuple[str, str]:
     """Extract a 2-3 sentence summary and continuation seed from a transcript."""
-    response = await client.chat.completions.create(
-        model=settings.openai_model,
+    response = await _client(provider).chat.completions.create(
+        model=_model(provider),
         messages=[
             {
                 "role": "user",

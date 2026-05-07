@@ -28,6 +28,17 @@ OPENAI_API_KEY=sk-...
 ELEVENLABS_API_KEY=sk_...
 ```
 
+#### Optional: local model via Ollama
+
+To add a local model option alongside OpenAI, install [Ollama](https://ollama.com), pull a model, and add two more variables:
+
+```
+LOCAL_BASE_URL=http://localhost:11434/v1
+LOCAL_MODEL=llama3.2
+```
+
+When `LOCAL_BASE_URL` is set, a **Model** pill row appears in the UI letting you switch between OpenAI and the local model per session.
+
 ### 2. Install dependencies
 
 ```bash
@@ -41,7 +52,8 @@ cd frontend && npm install && cd ..
 ### 3. Start both servers
 
 ```bash
-overmind start
+overmind start                      # backend + frontend + ollama
+overmind start -l backend,frontend  # skip ollama (OpenAI only)
 ```
 
 This starts the FastAPI backend (port 8000) and the Vite frontend (port 5173) together. `Ctrl+C` stops both cleanly.

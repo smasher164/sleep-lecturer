@@ -10,6 +10,8 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [timerSeconds, setTimerSeconds] = useState<number | null>(null);
+  const [timerMinutes, setTimerMinutes] = useState(30);
+  const [provider, setProvider] = useState("openai");
 
   const {
     playing,
@@ -43,12 +45,12 @@ export default function App() {
     return () => clearTimeout(id);
   }, [timerSeconds, isPaused, stop]);
 
-  async function handleStart(topic: string, timerMinutes: number) {
+  async function handleStart(topic: string, timerMinutes: number, provider: string) {
     unlock();
     setLoading(true);
     setError(null);
     try {
-      const first = await startSession(topic);
+      const first = await startSession(topic, provider);
       setSessionId(first.session_id);
       start(first);
       setTimerSeconds(timerMinutes * 60);
@@ -73,7 +75,14 @@ export default function App() {
       </header>
 
       {!playing && (
-        <TopicForm onStart={handleStart} disabled={loading} />
+        <TopicForm
+          onStart={handleStart}
+          disabled={loading}
+          timerMinutes={timerMinutes}
+          onTimerChange={setTimerMinutes}
+          provider={provider}
+          onProviderChange={setProvider}
+        />
       )}
 
       {loading && <p className={styles.status}>Generating first segment…</p>}
