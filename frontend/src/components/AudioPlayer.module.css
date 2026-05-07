@@ -11,10 +11,17 @@
   max-width: 100%;
 }
 
+@media (max-width: 480px) {
+  .card {
+    width: 100%;
+    padding: 24px 20px;
+  }
+}
+
 .label {
   color: #4a4540;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
@@ -28,22 +35,25 @@
 
 .btn {
   background: none;
-  border: none;
+  border: 1px solid #2a2a2a;
   color: #d8d3cc;
   cursor: pointer;
   font-size: 1.4rem;
   line-height: 1;
-  padding: 8px;
+  padding: 12px;
   border-radius: 50%;
-  transition: color 0.15s, background 0.15s;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 48px;
+  min-height: 48px;
 }
 
 .btn:hover {
   color: #c4a07a;
   background: #1a1a1a;
+  border-color: #c4a07a;
 }
 
 .btnStop {
@@ -60,7 +70,7 @@
 .timer {
   color: #c4a07a;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.05em;
   opacity: 0.7;
@@ -82,7 +92,7 @@
 .volumeLabel {
   color: #4a4540;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   width: 64px;
@@ -105,21 +115,28 @@
   appearance: none;
   background: #c4a07a;
   border-radius: 50%;
-  height: 12px;
-  width: 12px;
+  height: 18px;
+  width: 18px;
   cursor: pointer;
-  transition: transform 0.15s;
+  transition: background 0.15s, transform 0.15s;
 }
 
 .slider::-webkit-slider-thumb:hover {
-  transform: scale(1.3);
+  background: #d4b08a;
+  transform: scale(1.2);
 }
 
 .slider::-moz-range-thumb {
   background: #c4a07a;
   border: none;
   border-radius: 50%;
-  height: 12px;
-  width: 12px;
+  height: 18px;
+  width: 18px;
   cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.slider::-moz-range-thumb:hover {
+  background: #d4b08a;
+  transform: scale(1.2);
 }

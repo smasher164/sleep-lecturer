@@ -1,0 +1,79 @@
+# Sleep Lecturer
+
+AI academic lectures for passive listening and sleep. Enter a topic and the app continuously generates calm, meandering lecture audio — powered by OpenAI for transcripts and ElevenLabs for text-to-speech.
+
+Live at: https://sleep-lecturer.fly.dev
+
+## How it works
+
+The app is segment-based: the backend generates a 60–120s transcript, synthesizes it to audio via ElevenLabs, and the frontend queues and plays segments sequentially while prefetching the next one.
+
+## Running locally
+
+### Prerequisites
+
+- [Nix](https://nixos.org) with flakes enabled (provides Python, Node, overmind)
+- Or manually: Python 3.11+, Node 20+, [overmind](https://github.com/DarthSim/overmind)
+
+### 1. Environment variables
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Fill in `backend/.env`:
+
+```
+OPENAI_API_KEY=sk-...
+ELEVENLABS_API_KEY=sk_...
+```
+
+### 2. Install dependencies
+
+```bash
+# Backend
+cd backend && pip install -e ".[dev]" && cd ..
+
+# Frontend
+cd frontend && npm install && cd ..
+```
+
+### 3. Start both servers
+
+```bash
+overmind start
+```
+
+This starts the FastAPI backend (port 8000) and the Vite frontend (port 5173) together. `Ctrl+C` stops both cleanly.
+
+To start them separately:
+
+```bash
+# Backend
+cd backend && .venv/bin/uvicorn app.main:app --reload
+
+# Frontend
+cd frontend && npm run dev
+```
+
+The frontend proxies `/session` and `/audio` requests to the backend, so open http://localhost:5173.
+
+## Deploying to Fly.io
+
+The app is deployed as a single Docker container — the frontend is compiled at build time and served as static files by the FastAPI backend.
+
+### First-time setup
+
+```bash
+fly auth login
+fly launch          # only needed once; fly.toml is already configured
+fly secrets set OPENAI_API_KEY=sk-... ELEVENLABS_API_KEY=sk_...
+```
+
+### Redeploy after changes
+
+```bash
+fly deploy
+```
+
+The live app will be at https://sleep-lecturer.fly.dev.

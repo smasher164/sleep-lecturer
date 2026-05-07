@@ -7,13 +7,20 @@ export interface SegmentResponse {
   transcript: string;
 }
 
+async function checkResponse(res: Response, fallback: string): Promise<void> {
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.detail ?? fallback);
+  }
+}
+
 export async function startSession(topic: string): Promise<SegmentResponse> {
   const res = await fetch(`${BASE}/session/start`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ topic }),
   });
-  if (!res.ok) throw new Error("Failed to start session");
+  await checkResponse(res, "Failed to start session");
   return res.json();
 }
 
@@ -21,6 +28,6 @@ export async function fetchNextSegment(
   sessionId: string
 ): Promise<SegmentResponse> {
   const res = await fetch(`${BASE}/session/${sessionId}/next`);
-  if (!res.ok) throw new Error("Failed to fetch next segment");
+  await checkResponse(res, "Failed to fetch next segment");
   return res.json();
 }
