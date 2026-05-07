@@ -1,0 +1,110 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 380px;
+  max-width: 100%;
+}
+
+.input {
+  box-sizing: border-box;
+  background: #111;
+  border: 1px solid #252525;
+  border-radius: 4px;
+  color: #d8d3cc;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  padding: 14px 18px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.input::placeholder {
+  color: #3a3530;
+}
+
+.input:focus {
+  border-color: #c4a07a;
+}
+
+.input:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.timerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.timerLabel {
+  color: #4a4540;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.timerPills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pill,
+.pillActive {
+  background: none;
+  border: 1px solid #252525;
+  border-radius: 20px;
+  color: #5a5550;
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.72rem;
+  padding: 5px 12px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.pill:hover:not(:disabled) {
+  border-color: #c4a07a;
+  color: #c4a07a;
+}
+
+.pillActive {
+  border-color: #c4a07a;
+  color: #c4a07a;
+}
+
+.pill:disabled,
+.pillActive:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.button {
+  background: #c4a07a;
+  border: none;
+  border-radius: 4px;
+  color: #0b0b0b;
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  padding: 14px;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+  width: 100%;
+}
+
+.button:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
