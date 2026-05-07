@@ -16,6 +16,7 @@ export default function App() {
     isPaused,
     volume,
     ambianceVolume,
+    unlock,
     start,
     pause,
     resume,
@@ -43,6 +44,7 @@ export default function App() {
   }, [timerSeconds, isPaused, stop]);
 
   async function handleStart(topic: string, timerMinutes: number) {
+    unlock();
     setLoading(true);
     setError(null);
     try {

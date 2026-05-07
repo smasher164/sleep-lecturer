@@ -43,14 +43,15 @@
 .timerRow {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 12px;
   width: 100%;
 }
 
 .timerLabel {
   color: #4a4540;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.78rem;
+  font-size: clamp(0.65rem, 2.5vw, 0.78rem);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   flex-shrink: 0;
@@ -58,8 +59,8 @@
 
 .timerPills {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  gap: clamp(3px, 1.5vw, 6px);
+  flex-wrap: nowrap;
 }
 
 .pill,
@@ -70,9 +71,10 @@
   color: #5a5550;
   cursor: pointer;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.82rem;
-  padding: 5px 12px;
+  font-size: clamp(0.68rem, 2.8vw, 0.82rem);
+  padding: 4px clamp(4px, 2vw, 12px);
   transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
 }
 
 .pill:hover:not(:disabled) {

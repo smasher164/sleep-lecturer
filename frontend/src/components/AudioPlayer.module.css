@@ -108,6 +108,7 @@
   flex: 1;
   height: 3px;
   outline: none;
+  touch-action: pan-y;
 }
 
 .slider::-webkit-slider-thumb {
