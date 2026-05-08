@@ -81,6 +81,7 @@ SESSION_SECRET=...
 
 | Task | Command |
 |------|---------|
+| Start all (local dev) | `./run-local` |
 | Start backend | `uvicorn backend.main:app --reload` |
 | Start frontend | `cd frontend && npm run dev` |
 | Run backend tests | `pytest` |

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null 2>&1; then
+  echo "ollama already running, excluding from overmind"
+  exec overmind start -x ollama
+else
+  exec overmind start
+fi

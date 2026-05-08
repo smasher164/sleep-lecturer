@@ -52,11 +52,10 @@ cd frontend && npm install && cd ..
 ### 3. Start both servers
 
 ```bash
-overmind start                      # backend + frontend + ollama
-overmind start -l backend,frontend  # skip ollama (OpenAI only)
+./run-local
 ```
 
-This starts the FastAPI backend (port 8000) and the Vite frontend (port 5173) together. `Ctrl+C` stops both cleanly.
+This starts the FastAPI backend (port 8000), the Vite frontend (port 5173), and Ollama (if not already running) together via overmind. `Ctrl+C` stops everything cleanly.
 
 To start them separately:
 
